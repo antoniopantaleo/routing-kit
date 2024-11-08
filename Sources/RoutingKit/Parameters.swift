@@ -8,6 +8,7 @@ import Logging
 ///
 ///     let postID = parameters.get("post_id")
 ///
+@dynamicMemberLookup
 public struct Parameters: Sendable {
     /// Internal storage.
     private var values: [String: String]
@@ -47,6 +48,18 @@ public struct Parameters: Sendable {
     ///
     public func get(_ name: String) -> String? {
         self.values[name]
+    }
+    
+    /// Grabs the named parameter from the parameter bag directly.
+    ///
+    /// For example `GET /posts/:post_id/comments/:comment_id`
+    /// would be fetched using:
+    ///
+    ///     let postID = parameters.post_id
+    ///     let commentID = parameters.comment_id
+    ///
+    public subscript(dynamicMember member: String) -> String? {
+        self.get(member)
     }
     
     /// Grabs the named parameter from the parameter bag, casting it to

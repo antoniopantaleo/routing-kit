@@ -10,6 +10,15 @@ final class RouterTests: XCTestCase {
         XCTAssertEqual(params.get("user"), "Tanner")
     }
     
+    func testRouterDynamicMemberLookupSubscript() throws {
+        let router = TrieRouter(Int.self)
+        router.register(42, at: [":user"])
+        var params = Parameters()
+        XCTAssertEqual(router.route(path: ["Tanner"], parameters: &params), 42)
+        XCTAssertEqual(params.user, "Tanner")
+        XCTAssertNil(params.foo)
+    }
+    
     func testCaseSensitiveRouting() throws {
         let router = TrieRouter<Int>()
         router.register(42, at: [.constant("path"), .constant("TO"), .constant("fOo")])
@@ -107,6 +116,7 @@ final class RouterTests: XCTestCase {
         var params = Parameters()
         XCTAssertEqual(router.route(path: ["a", "te%20st"], parameters: &params), "c")
         XCTAssertEqual(params.get("b"), "te st")
+        XCTAssertEqual(params.b, "te st")
     }
 
     // https://github.com/vapor/routing-kit/issues/74
